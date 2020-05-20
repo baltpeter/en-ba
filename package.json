@@ -1,7 +1,7 @@
 {
-  "name": "@doyensec/electronegativity",
-  "version": "1.6.0",
-  "description": "Electronegativity is a tool to identify misconfigurations and security anti-patterns in Electron applications",
+  "name": "@baltpeter/ba-en",
+  "version": "99.6.0",
+  "description": "Electronegativity is a tool to identify misconfigurations and security anti-patterns in Electron applications. This is a fork specifically for my bachelor's thesis.",
   "main": "dist/runner.js",
   "scripts": {
     "build": "rimraf dist/ && babel ./src --out-dir dist/ --source-maps",

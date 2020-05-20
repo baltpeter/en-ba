@@ -13,11 +13,6 @@
     },
     "rules": {
         "no-console": "off",
-        "indent": [
-            "error",
-            2,
-            { "SwitchCase": 1 }
-        ],
         "semi": [
             "error",
             "always"

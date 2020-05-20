@@ -8,17 +8,15 @@ import run from './runner.js';
 const VER = require('../package.json').version;
 
 console.log(`
-▄▄▄ ▄▄▌ ▄▄▄ .▄▄·▄▄▄▄▄▄▄               
-▀▄.▀██• ▀▄.▀▐█ ▌•██ ▀▄ █▪             
-▐▀▀▪██▪ ▐▀▀▪██ ▄▄▐█.▐▀▀▄ ▄█▀▄         
-▐█▄▄▐█▌▐▐█▄▄▐███▌▐█▌▐█•█▐█▌.▐▌        
- ▀▀▀.▀▀▀ ▀▀▀·▀▀▀ ▀▀▀.▀  ▀▀█▄▀▪        
- ▐ ▄▄▄▄ .▄▄ • ▄▄▄▄▄▄▄▪  ▌ ▐▪▄▄▄▄▄▄· ▄▌
-•█▌▐▀▄.▀▐█ ▀ ▐█ ▀•██ ██▪█·██•██ ▐█▪██▌
-▐█▐▐▐▀▀▪▄█ ▀█▄█▀▀█▐█.▐█▐█▐█▐█▐█.▐█▌▐█▪
-██▐█▐█▄▄▐█▄▪▐▐█ ▪▐▐█▌▐█▌███▐█▐█▌·▐█▀·.
-▀▀ █▪▀▀▀·▀▀▀▀ ▀  ▀▀▀▀▀▀. ▀ ▀▀▀▀▀  ▀ •
-     v`+VER+`  https://doyensec.com/
+┏━━━┳┓╋╋╋╋╋╋┏┓╋╋╋╋╋┏━┓╋┏┓╋╋╋╋╋╋╋╋┏┓╋╋╋╋╋┏┓
+┃┏━━┫┃╋╋╋╋╋┏┛┗┓╋╋╋╋┃┃┗┓┃┃╋╋╋╋╋╋╋┏┛┗┓╋╋╋┏┛┗┓
+┃┗━━┫┃┏━━┳━┻┓┏╋━┳━━┫┏┓┗┛┣━━┳━━┳━┻┓┏╋┳┓┏╋┓┏╋┓╋┏┓
+┃┏━━┫┃┃┃━┫┏━┫┃┃┏┫┏┓┃┃┗┓┃┃┃━┫┏┓┃┏┓┃┃┣┫┗┛┣┫┃┃┃╋┃┃
+┃┗━━┫┗┫┃━┫┗━┫┗┫┃┃┗┛┃┃╋┃┃┃┃━┫┗┛┃┏┓┃┗┫┣┓┏┫┃┗┫┗━┛┃
+┗━━━┻━┻━━┻━━┻━┻┛┗━━┻┛╋┗━┻━━┻━┓┣┛┗┻━┻┛┗┛┗┻━┻━┓┏┛
+╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋┏━┛┃╋╋╋╋╋╋╋╋╋╋╋┏━┛┃
+╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋╋┗━━┛╋╋╋╋╋╋╋╋╋╋╋┗━━┛
+  v`+VER+`    https://doyensec.com/ + Benjamin Altpeter
 `);
 console.log("Scan Status:");
 
@@ -63,10 +61,10 @@ const forCli = true;
 
 run({
   input,
-  output: program.output, 
+  output: program.output,
   isSarif: program.fileFormat === 'sarif',
   customScan: program.checks,
-  severitySet: program.severity, 
+  severitySet: program.severity,
   confidenceSet: program.confidence,
   isRelative: program.relative,
   isVerbose: program.verbose,
