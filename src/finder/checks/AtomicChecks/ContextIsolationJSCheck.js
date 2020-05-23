@@ -1,3 +1,4 @@
+import { lt } from 'semver';
 import { sourceTypes } from '../../../parser/types';
 import { severity, confidence } from '../../attributes';
 
@@ -9,7 +10,7 @@ export default class ContextIsolationJSCheck {
     this.shortenedURL = "https://git.io/Jeu1p";
   }
 
-  match(astNode, astHelper, scope){
+  match(astNode, astHelper, scope, electron_version){
     if (astNode.type !== 'NewExpression') return null;
     if (astNode.callee.name !== 'BrowserWindow' && astNode.callee.name !== 'BrowserView') return null;
 
@@ -30,23 +31,22 @@ export default class ContextIsolationJSCheck {
         false,
         node => (node.key.value === 'contextIsolation' || node.key.name === 'contextIsolation'));
 
-      //At the time of writing this check, you always need contextIsolation (trust us!)  
-      //if (preload.length > 0) { 
+      // Prior to Electron 5.0, `contextIsolation` had to be explicitly set to `true`.
       if (contextIsolation.length > 0) {
         for (const node of contextIsolation) {
           // in practice if there are two keys with the same name, the value of the last one wins
           // but technically it is an invalid json
           // just to be on the safe side show a warning if any value is insecure
-          if(node.value.value !== true) {
+          if(node.value.value === false || (lt(electron_version, '5.0.0') && node.value.value !== true)) {
             location.push({ line: node.key.loc.start.line, column: node.key.loc.start.column, id: this.id, description: this.description, shortenedURL: this.shortenedURL, severity: severity.HIGH, confidence: confidence.FIRM, manualReview: false });
           }
         }
-      } else {
+      } else if (lt(electron_version, '5.0.0')) {
         location.push({ line: astNode.loc.start.line, column: astNode.loc.start.column, id: this.id, description: this.description, shortenedURL: this.shortenedURL, severity: severity.HIGH, confidence: confidence.FIRM, manualReview: false });
       }
-      
-    } else {
-      //No webpreferences
+
+    } else if (lt(electron_version, '5.0.0')) {
+      //No webpreferences and Electron < 5.0.0
       location.push({ line: astNode.loc.start.line, column: astNode.loc.start.column, id: this.id, description: this.description, shortenedURL: this.shortenedURL, severity: severity.HIGH, confidence: confidence.FIRM, manualReview: false });
     }
 

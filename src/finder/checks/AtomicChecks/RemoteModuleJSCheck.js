@@ -1,3 +1,4 @@
+import { lt } from 'semver';
 import { sourceTypes } from '../../../parser/types';
 import { severity, confidence } from '../../attributes';
 
@@ -9,7 +10,7 @@ export default class RemoteModuleJSCheck {
     this.shortenedURL = "https://git.io/JvqrQ";
   }
 
-  match(astNode, astHelper, scope){
+  match(astNode, astHelper, scope, electron_version){
     if (astNode.type !== 'NewExpression') return null;
     if (astNode.callee.name !== 'BrowserWindow' && astNode.callee.name !== 'BrowserView') return null;
 
@@ -36,7 +37,7 @@ export default class RemoteModuleJSCheck {
 
     if (wasFound) {
       return loc;
-    } else { // default is module 'remote' enabled (assuming nodeIntegration:true), which is a misconfiguration
+    } else if(lt(electron_version, '9.0.0')) { // default prior to 9.0.0 was module 'remote' enabled (assuming nodeIntegration:true), which is a misconfiguration
       return [{ line: astNode.loc.start.line, column: astNode.loc.start.column, id: this.id, description: this.description, shortenedURL: this.shortenedURL, severity: severity.MEDIUM, confidence: confidence.TENTATIVE, manualReview: true }];
     }
   }
