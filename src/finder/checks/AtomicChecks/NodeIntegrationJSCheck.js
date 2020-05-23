@@ -1,3 +1,4 @@
+import { lt } from 'semver';
 import { sourceTypes } from '../../../parser/types';
 import { severity, confidence } from '../../attributes';
 
@@ -13,7 +14,7 @@ export default class NodeIntegrationJSCheck {
   //nodeIntegrationInWorker Boolean (optional) - Whether node integration is enabled in web workers. Default is false
   //nodeIntegrationInSubFrames Boolean (optional) - Whether node integration is enabled in in sub-frames such as iframes. Default is false
 
-  match(astNode, astHelper, scope){
+  match(astNode, astHelper, scope, electron_version){
     if (astNode.type !== 'NewExpression') return null;
     if (astNode.callee.name !== 'BrowserWindow' && astNode.callee.name !== 'BrowserView') return null;
 
@@ -37,7 +38,8 @@ export default class NodeIntegrationJSCheck {
         locations = locations.concat(loc);
     }
 
-    if (!nodeIntegrationFound) {
+    // Electron versions prior to 5.0.0 defaulted `nodeIntegration` to `true` if not set.
+    if (lt(electron_version, '5.0.0') && !nodeIntegrationFound) {
       locations.push({ line: astNode.loc.start.line, column: astNode.loc.start.column, id: this.id, description: this.description,  shortenedURL: this.shortenedURL, severity: severity.HIGH, confidence: confidence.FIRM, manualReview: false });
     }
 
@@ -61,7 +63,7 @@ export default class NodeIntegrationJSCheck {
         if ((node.key.value === "sandbox" || node.key.name === "sandbox") && isIdentifier) continue;
         if ((nodeIntegrationStrings.includes(node.key.value) || nodeIntegrationStrings.includes(node.key.name)) && !isIdentifier) continue;
       }
-        
+
       locations.push({
         line: node.key.loc.start.line,
         column: node.key.loc.start.column,

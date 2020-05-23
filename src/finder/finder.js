@@ -58,7 +58,11 @@ export class Finder {
     return sample;
   }
 
-  async find(file, data, type, content, use_only_checks = null) {
+  async find(file, data, type, content, use_only_checks = null, electron_version = null) {
+    // If the loader didn't detect the Electron version, assume the first one. Not knowing the version, we have to assume the worst (i.e.
+    // all options defaulting to insecure values). By always setting the version here, the code in the checkers is simplified as they now
+    // don't have to handle the case of unknown versions.
+    if (!electron_version) electron_version = '0.1.0';
     const checks = this._checks_by_type.get(type).filter((check) => {
       if (use_only_checks && !use_only_checks.includes(check.id)) {
         return false;
@@ -75,7 +79,7 @@ export class Finder {
           enter: (node) => {
             rootData.Scope.updateFunctionScope(rootData.astParser.getNode(node), "enter");
             for (const check of checks) {
-              const matches = check.match(rootData.astParser.getNode(node), rootData.astParser, rootData.Scope);
+              const matches = check.match(rootData.astParser.getNode(node), rootData.astParser, rootData.Scope, electron_version);
               if (matches) {
                 for(const m of matches) {
                   const sample = this.get_sample(fileLines, m.line - 1);
@@ -93,7 +97,7 @@ export class Finder {
         break;
       case sourceTypes.HTML:
         for (const check of checks) {
-          const matches = check.match(data, content);
+          const matches = check.match(data, content, electron_version);
           if(matches){
             for(const m of matches) {
               const sample = this.get_sample(fileLines, m.line - 1);
@@ -105,7 +109,7 @@ export class Finder {
         break;
       case sourceTypes.JSON:
         for (const check of checks) {
-          const matches = await check.match(data);
+          const matches = await check.match(data, electron_version);
           if (matches) {
             for(const m of matches) {
               const sample = this.get_sample(fileLines, m.line - 1);
