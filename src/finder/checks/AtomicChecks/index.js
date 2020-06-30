@@ -37,6 +37,7 @@ import WebSecurityJSCheck from './WebSecurityJSCheck';
 
 import UserProvidedHtmlJSCheck from './UserProvidedHtmlJSCheck';
 import UserProvidedCodeExecutionJSCheck from './UserProvidedCodeExecutionJSCheck';
+import DevToolsJSCheck from './DevToolsJSCheck';
 
 const CHECKS = [
     AffinityHTMLCheck,
@@ -78,6 +79,7 @@ const CHECKS = [
 
     UserProvidedHtmlJSCheck,
     UserProvidedCodeExecutionJSCheck,
+    DevToolsJSCheck,
 ];
 
 module.exports.CHECKS = CHECKS;
