@@ -25,9 +25,12 @@ export default class UserProvidedHtmlJSCheck {
         }
 
         // Catch `document.{write,writeln}(html);`.
-        // TODO: Currently, we are matching those calls on any object. Can we restrict this to the `document` object?
+        // Note: This only matches if called on an object called `document`. This seems like a reasonable tradeoff to
+        //       avoid false positives, though.
         if (
             astNode.expression.type === 'CallExpression' &&
+            astNode.expression.callee.object &&
+            astNode.expression.callee.object.name === 'document' &&
             ['write', 'writeln'].includes(astNode.expression.callee.property && astNode.expression.callee.property.name)
         ) {
             if (astNode.expression.arguments.every((a) => a.type === 'Literal')) return;
