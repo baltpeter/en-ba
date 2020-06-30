@@ -1,3 +1,5 @@
+env.sh
+
 .DS_Store
 
 # Logs
@@ -64,7 +66,7 @@ typings/
 .env
 
 # Vscode stuff
-.vscode 
+.vscode
 
 # Babel
 .babelrc
