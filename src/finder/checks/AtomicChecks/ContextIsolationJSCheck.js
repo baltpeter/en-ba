@@ -36,6 +36,7 @@ export default class ContextIsolationJSCheck {
             //At the time of writing this check, you always need contextIsolation (trust us!)
             //if (preload.length > 0) {
             if (contextIsolation.length > 0) {
+                // explicitly disabled
                 for (const node of contextIsolation) {
                     // in practice if there are two keys with the same name, the value of the last one wins
                     // but technically it is an invalid json
@@ -54,6 +55,7 @@ export default class ContextIsolationJSCheck {
                     }
                 }
             } else {
+                // not present (-> implicitly disabled)
                 location.push({
                     line: astNode.loc.start.line,
                     column: astNode.loc.start.column,

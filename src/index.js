@@ -43,6 +43,7 @@ program
     )
     .option('-j, --json', 'log the output as JSON instead of printing a table')
     .option('-g, --ignore-errors', 'ignore parser errors')
+    .option('-b, --benni', 'process for my needs')
     .parse(process.argv);
 
 if (!program.input) {
@@ -83,6 +84,7 @@ run(
         electronVersionOverride: program.electronVersion,
         jsonOverride: program.json,
         noErrors: program.ignoreErrors,
+        benni: program.benni,
     },
     forCli
 );

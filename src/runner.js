@@ -136,14 +136,24 @@ export default async function run(options, forCli = false) {
     // and false positives before presenting them in the final report (e.g. CSP)
     issues = await globalChecker.getResults(issues);
 
-    // adjust to Relative or Absolute path
-    if (options.isRelative)
-        issues.forEach(function (issue, i, issues) {
-            issues[i].file = getRelativePath(options.input, issue.file);
-        });
+    issues.forEach(function (issue, i, issues) {
+        // adjust to Relative or Absolute path
+        if (options.isRelative) issues[i].file = getRelativePath(options.input, issue.file);
+
+        // Process issues output for my needs.
+        if (options.benni) {
+            // Limit sample length to 120 chars.
+            if (issues[i].sample) issues[i].sample = issues[i].sample.substring(0, 120);
+            delete issues[i].description;
+            delete issues[i].shortenedURL;
+            delete issues[i].manualReview;
+            delete issues[i].severity;
+            delete issues[i].confidence;
+        }
+    });
 
     let rows = [];
-    if (forCli) {
+    if (forCli && !options.benni) {
         for (const issue of issues) {
             if (
                 issue.severity.value >= options.severitySet.value &&
