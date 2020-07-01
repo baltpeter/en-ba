@@ -29,11 +29,7 @@ export default async function run(options, forCli = false) {
     }
 
     await loader.load(options.input);
-    const electronVersion = options.electronVersionOverride || loader.electronVersion;
-    if (!electronVersion)
-        logger.warn(
-            "Couldn't detect Electron version, assuming v0.1.0. Defaults have probably changed for your actual version, please check manually."
-        );
+    const electronVersion = options.electronVersionOverride || loader.electronVersion || '0.1.99';
 
     if (options.severitySet) {
         if (!severity.hasOwnProperty(options.severitySet.toUpperCase())) {
@@ -170,6 +166,7 @@ export default async function run(options, forCli = false) {
         globalChecks: globalChecker._enabled_checks.length,
         atomicChecks: finder._enabled_checks.length,
         issues,
+        electronVersion,
     };
     if (!options.noErrors) res.errors = errors;
     if (forCli) {
