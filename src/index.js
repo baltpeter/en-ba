@@ -41,6 +41,8 @@ program
         '-e, --electron-version <version>',
         'assume the set Electron version, overriding the detected one, eg -e 7.0.0 to treat as using Electron 7'
     )
+    .option('-j, --json', 'log the output as JSON instead of printing a table')
+    .option('-g, --ignore-errors', 'ignore parser errors')
     .parse(process.argv);
 
 if (!program.input) {
@@ -79,6 +81,8 @@ run(
         isVerbose: program.verbose,
         electronUpgrade: program.upgrade,
         electronVersionOverride: program.electronVersion,
+        jsonOverride: program.json,
+        noErrors: program.ignoreErrors,
     },
     forCli
 );
