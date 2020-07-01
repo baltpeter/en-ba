@@ -1,6 +1,6 @@
 {
     "name": "@baltpeter/ba-en",
-    "version": "99.7.1",
+    "version": "99.7.2",
     "description": "Electronegativity is a tool to identify misconfigurations and security anti-patterns in Electron applications. This is a fork specifically for my bachelor's thesis.",
     "main": "dist/runner.js",
     "publishConfig": {
