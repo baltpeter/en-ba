@@ -19,6 +19,8 @@ export default async function run(options, forCli = false) {
         } else throw new Error(err);
     }
 
+    options.customScan = options.customScan.map((c) => c.toLowerCase());
+
     // Load
     let loader;
 
