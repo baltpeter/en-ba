@@ -1,5 +1,4 @@
 import { sourceTypes } from '../../../parser/types';
-import { severity, confidence } from '../../attributes';
 
 export default class DevToolsJSCheck {
     constructor() {
@@ -27,29 +26,20 @@ export default class DevToolsJSCheck {
             );
 
             for (const node of found_nodes) {
-                if (node.value.value === true) {
-                    location.push({
-                        line: node.key.loc.start.line,
-                        column: node.key.loc.start.column,
-                        id: this.id,
-                        description: this.description,
-                        shortenedURL: this.shortenedURL,
-                        severity: severity.LOW,
-                        confidence: confidence.CERTAIN,
-                        manualReview: false,
-                    });
-                }
+                location.push({
+                    line: node.key.loc.start.line,
+                    column: node.key.loc.start.column,
+                    id: this.id,
+                    properties: { type: node.value.value ? 'explicitly_enabled' : 'explicitly_disabled' },
+                });
             }
+            // not specified (-> implicitly enabled)
             if (found_nodes.length === 0) {
                 location.push({
                     line: astNode.loc.start.line,
                     column: astNode.loc.start.column,
                     id: this.id,
-                    description: this.description,
-                    shortenedURL: this.shortenedURL,
-                    severity: severity.MEDIUM,
-                    confidence: confidence.CERTAIN,
-                    manualReview: false,
+                    properties: { type: 'implicitly_enabled' },
                 });
             }
         }
