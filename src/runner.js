@@ -9,6 +9,7 @@ import { Finder } from './finder';
 import { GlobalChecks, severity, confidence } from './finder';
 import { extension, input_exists, is_directory, writeIssues, getRelativePath } from './util';
 import { convertCompilerOptionsFromJson } from 'typescript';
+import { minVersion } from 'semver';
 
 export default async function run(options, forCli = false) {
     if (!input_exists(options.input)) {
@@ -31,7 +32,7 @@ export default async function run(options, forCli = false) {
     }
 
     await loader.load(options.input);
-    const electronVersion = options.electronVersionOverride || loader.electronVersion || '0.1.99';
+    const electronVersion = minVersion(options.electronVersionOverride || loader.electronVersion || '0.1.99').raw;
 
     if (options.severitySet) {
         if (!severity.hasOwnProperty(options.severitySet.toUpperCase())) {
