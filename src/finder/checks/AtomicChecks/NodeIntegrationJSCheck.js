@@ -1,5 +1,4 @@
 import { sourceTypes } from '../../../parser/types';
-import { severity, confidence } from '../../attributes';
 
 export default class NodeIntegrationJSCheck {
     constructor() {
@@ -9,7 +8,7 @@ export default class NodeIntegrationJSCheck {
         this.shortenedURL = 'https://git.io/JeuMn';
     }
 
-    //nodeIntegration Boolean (optional) - Whether node integration is enabled. Default is true.
+    //nodeIntegration Boolean (optional) - Whether node integration is enabled. Default is true for versions < 5.0.0.
     //nodeIntegrationInWorker Boolean (optional) - Whether node integration is enabled in web workers. Default is false
     //nodeIntegrationInSubFrames Boolean (optional) - Whether node integration is enabled in in sub-frames such as iframes. Default is false
 
@@ -30,23 +29,15 @@ export default class NodeIntegrationJSCheck {
             this.findNode(astHelper, target, 'nodeIntegrationInWorker', (value) => value !== true, loc);
             this.findNode(astHelper, target, 'nodeIntegrationInSubFrames', (value) => value !== true, loc);
 
-            let sandboxLoc = [];
-            let sandboxFound = this.findNode(astHelper, target, 'sandbox', (value) => value !== true, sandboxLoc);
-            if (!sandboxFound || sandboxLoc.length <= 0)
-                // sandbox disables node integration
-                locations = locations.concat(loc);
+            locations = locations.concat(loc);
         }
 
-        if (!nodeIntegrationFound && defaults.nodeIntegration) {
+        if (!nodeIntegrationFound) {
             locations.push({
                 line: astNode.loc.start.line,
                 column: astNode.loc.start.column,
                 id: this.id,
-                description: this.description,
-                shortenedURL: this.shortenedURL,
-                severity: severity.HIGH,
-                confidence: confidence.FIRM,
-                manualReview: false,
+                properties: { type: defaults.nodeIntegration ? 'implicitly_enabled' : 'implicitly_disabled' },
             });
         }
 
@@ -55,7 +46,6 @@ export default class NodeIntegrationJSCheck {
 
     findNode(astHelper, startNode, name, skipCondition, locations) {
         let found = false;
-        var nodeIntegrationStrings = ['nodeIntegration', 'nodeIntegrationInWorker', 'nodeIntegrationInSubFrames'];
         const nodes = astHelper.findNodeByType(
             startNode,
             astHelper.PropertyName,
@@ -67,29 +57,13 @@ export default class NodeIntegrationJSCheck {
         );
 
         for (const node of nodes) {
-            // in practice if there are two keys with the same name, the value of the last one wins
-            // but technically it is an invalid json
-            // just to be on the safe side show a warning if any value is insecure
             found = true;
-            let isIdentifier = node.value.type === 'Identifier' ? true : false;
-            if (skipCondition(node.value.value)) {
-                if ((node.key.value === 'sandbox' || node.key.name === 'sandbox') && isIdentifier) continue;
-                if (
-                    (nodeIntegrationStrings.includes(node.key.value) ||
-                        nodeIntegrationStrings.includes(node.key.name)) &&
-                    !isIdentifier
-                )
-                    continue;
-            }
 
             locations.push({
                 line: node.key.loc.start.line,
                 column: node.key.loc.start.column,
                 id: this.id,
-                description: this.description,
-                severity: severity.INFORMATIONAL,
-                confidence: confidence.FIRM,
-                manualReview: isIdentifier,
+                properties: { type: node.value.value ? 'explicitly_enabled' : 'explicitly_disabled' },
             });
         }
 
