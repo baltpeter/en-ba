@@ -1,5 +1,6 @@
 import * as attributes from '../../attributes';
 import * as csp from '@doyensec/csp-evaluator';
+import logger from 'winston';
 
 export default class CSPGlobalCheck {
     constructor() {
@@ -32,13 +33,18 @@ export default class CSPGlobalCheck {
             for (const cspIssue of cspIssues) {
                 properties.csp_list.push(cspIssue.properties.CSPstring);
 
-                const parser = new csp.CspParser(cspIssue.properties.CSPstring);
-                const evaluator = new csp.CspEvaluator(parser.csp, csp.Version.CSP3);
-                const findings = evaluator.evaluate();
+                let findings;
+                try {
+                    const parser = new csp.CspParser(cspIssue.properties.CSPstring);
+                    const evaluator = new csp.CspEvaluator(parser.csp, csp.Version.CSP3);
+                    findings = evaluator.evaluate();
+                } catch (e) {
+                    logger.error('Parsing the CSP failed: ' + cspIssue.properties.CSPstring);
+                    continue;
+                }
                 let worst_grade = 'strong';
 
                 for (const finding of findings) {
-                    console.log(finding);
                     if (finding.severity === csp.severities.HIGH || finding.severity === csp.severities.MEDIUM) {
                         worst_grade = 'weak';
                     } else if (
