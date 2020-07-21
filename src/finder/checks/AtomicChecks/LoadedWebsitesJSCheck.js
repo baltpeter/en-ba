@@ -42,13 +42,33 @@ export default class LoadedWebsitesJSCheck {
         else if (astNode.arguments[0].type === 'Literal') target = astNode.arguments[0].value;
         else if (astNode.arguments[0].type === 'Identifier') target = scope.resolveVarValue(astNode).value;
         else if (astNode.arguments[0].type === 'CallExpression') {
-            // win.loadURL(url.format({ protocol: 'file:', ...args }));
-            const arg = astNode.arguments[0].arguments && astNode.arguments[0].arguments[0];
-            if (arg && arg.type == 'ObjectExpression') {
-                const path_arg = arg.properties && arg.properties.find((p) => p.key && p.key.name === 'protocol');
-                if (path_arg) target = path_arg.value && path_arg.value.value;
+            if (
+                astNode.arguments[0].callee &&
+                astNode.arguments[0].callee.object &&
+                astNode.arguments[0].callee.object.name === 'path' &&
+                astNode.arguments[0].callee.property &&
+                (astNode.arguments[0].callee.property.name === 'join' ||
+                    astNode.arguments[0].callee.property.name === 'resolve')
+            ) {
+                // win.loadURL(path.join('file:', ...args));
+                target =
+                    astNode.arguments[0].arguments &&
+                    astNode.arguments[0].arguments.map((a) => a.value || `\${${a.name}}`).join('/');
+            } else {
+                // win.loadURL(url.format({ protocol: 'file:', ...args }));
+                const arg = astNode.arguments[0].arguments && astNode.arguments[0].arguments[0];
+                if (arg && arg.type == 'ObjectExpression') {
+                    const path_arg = arg.properties && arg.properties.find((p) => p.key && p.key.name === 'protocol');
+                    if (path_arg) target = path_arg.value && path_arg.value.value;
+                }
             }
-        } else {
+        }
+        // This isn't actually necessary as the `else` clause in combination with cleanString() already handles this.
+        // else if (astNode.arguments[0].type === 'BinaryExpression' && astNode.arguments.operator === '+') {
+        //     // win.loadURL('file://' + something);
+        //     target = astNode.arguments[0].left && astNode.arguments[0].left.value;
+        // }
+        else {
             target = extractSample(
                 lines,
                 astNode.arguments[0].loc.start.line - 1,
