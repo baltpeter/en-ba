@@ -24,6 +24,7 @@ export default class CSPGlobalCheck {
             num_strong_csps: 0,
             num_maybe_weak_csps: 0,
             num_weak_csps: 0,
+            num_invalid_csps: 0,
         };
         if (cspIssues.length === 0) {
             // No CSP detected
@@ -31,7 +32,7 @@ export default class CSPGlobalCheck {
         } else {
             // There is a CSP set
             for (const cspIssue of cspIssues) {
-                properties.csp_list.push(cspIssue.properties.CSPstring);
+                if (cspIssue.properties.CSPstring) properties.csp_list.push(cspIssue.properties.CSPstring);
 
                 let findings;
                 try {
@@ -39,7 +40,7 @@ export default class CSPGlobalCheck {
                     const evaluator = new csp.CspEvaluator(parser.csp, csp.Version.CSP3);
                     findings = evaluator.evaluate();
                 } catch (e) {
-                    logger.error('Parsing the CSP failed: ' + cspIssue.properties.CSPstring);
+                    properties.num_invalid_csps++;
                     continue;
                 }
                 let worst_grade = 'strong';
