@@ -15,7 +15,7 @@ const extractSample = (lines, start_line, start_col, end_line, end_col) => {
     }
 };
 
-const cleanTemplateLiteral = (lit) => lit.replace(/^`/, '').replace(/`$/, '');
+const cleanString = (lit) => lit.replace(/^[`'"]/, '').replace(/[`'"]$/, '');
 
 export default class LoadedWebsitesJSCheck {
     constructor() {
@@ -56,9 +56,8 @@ export default class LoadedWebsitesJSCheck {
                 astNode.arguments[0].loc.end.line - 1,
                 astNode.arguments[0].loc.end.column
             );
-
-            if (astNode.arguments[0].type === 'TemplateLiteral') target = cleanTemplateLiteral(target);
         }
+        target = cleanString(target);
 
         let method = astNode.callee.name || (astNode.callee.property && astNode.callee.property.name);
         if (!target) method = 'unknown';
