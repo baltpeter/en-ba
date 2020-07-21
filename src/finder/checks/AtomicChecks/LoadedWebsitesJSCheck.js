@@ -80,10 +80,9 @@ export default class LoadedWebsitesJSCheck {
         target = cleanString(target);
 
         let method = astNode.callee.name || (astNode.callee.property && astNode.callee.property.name);
-        if (!target) method = 'unknown';
-        else if (method === 'loadURL') {
+        if (method === 'loadURL') {
             // See https://tools.ietf.org/html/rfc3986#section-3.1 for valid protocol structure.
-            if (!/^[a-zA-Z][a-zA-Z0-9+-.]*:/.test(target)) method = 'unknown';
+            if (!target || !/^[a-zA-Z][a-zA-Z0-9+-.]*:/.test(target)) method = 'unknown';
             else if (new RegExp('^file', 'i').test(target)) method = 'loadFile';
             else if (new RegExp('^https?', 'i').test(target)) method = 'loadURL';
             else method = 'loadFile';
