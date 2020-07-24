@@ -3,19 +3,19 @@ import { severity, confidence } from '../../attributes';
 
 const extractSample = (lines, start_line, start_col, end_line, end_col) => {
     if (start_line === end_line) {
-        return lines[start_line].substring(start_col, end_col);
+        return (lines[start_line] || '').substring(start_col, end_col);
     } else if (end_line - start_line == 1) {
-        return lines[start_line].substring(start_col) + '\n' + lines[end_line].substring(0, end_col);
+        return (lines[start_line] || '').substring(start_col) + '\n' + (lines[end_line] || '').substring(0, end_col);
     } else {
-        let result = lines[start_line].substring(start_col);
+        let result = (lines[start_line] || '').substring(start_col);
         for (let i = start_line + 1; i < end_line; i++) result += '\n' + lines[i];
-        result += '\n' + lines[end_line].substring(0, end_col);
+        result += '\n' + (lines[end_line] || '').substring(0, end_col);
 
         return result;
     }
 };
 
-const cleanString = (lit) => lit.replace(/^[`'"]/, '').replace(/[`'"]$/, '');
+const cleanString = (lit) => (lit || '').replace(/^[`'"]/, '').replace(/[`'"]$/, '');
 
 export default class LoadedWebsitesJSCheck {
     constructor() {
