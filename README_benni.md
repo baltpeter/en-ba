@@ -1,6 +1,7 @@
 ## Publishing a new version
 
 * Increment version number in `package.json`
+* Run `npm run build`
 * Run `npm publish`
 
 ## Use the new version in the VM

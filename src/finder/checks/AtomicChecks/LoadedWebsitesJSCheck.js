@@ -85,7 +85,7 @@ export default class LoadedWebsitesJSCheck {
             if (!target || !/^[a-zA-Z][a-zA-Z0-9+-.]*:/.test(target)) method = 'unknown';
             else if (new RegExp('^file', 'i').test(target)) method = 'loadFile';
             else if (new RegExp('^https?', 'i').test(target)) method = 'loadURL';
-            else method = 'loadFile';
+            else method = 'protocol';
         }
 
         return [

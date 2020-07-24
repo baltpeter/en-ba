@@ -143,10 +143,10 @@ export default class AvailableSecurityFixesGlobalCheck {
         outputFileContent.push(essentialInfo);
       }
       fs.writeFileSync(path.resolve(this.releasesFilePath, 'releases.'+remoteEtag+'.json'), JSON.stringify(outputFileContent, null, 1));
-      console.log(chalk.green(`Updated releases list to ${latest}!`));
+      // console.log(chalk.green(`Updated releases list to ${latest}!`));
       return true;
     } else {
-      console.log(chalk.green(`Releases list is up to date.`));
+      // console.log(chalk.green(`Releases list is up to date.`));
     }
   }
 
