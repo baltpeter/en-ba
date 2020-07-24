@@ -86,7 +86,8 @@ export class Parser {
       ecmaFeatures: {
         jsx: true,
         modules: true
-      }
+      },
+      loggerFn: false
     });
 
     data.astParser = this.esLintESTreeAst;
